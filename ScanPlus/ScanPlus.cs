@@ -20,9 +20,11 @@ namespace ScanPlus
         private static ManualLogSource _log = null!;
         private static ConfigEntry<int>
             config_DetailLevel,
-            config_ShipUpgrade;
+            config_ShipUpgrade,
+            config_UpgradePrice;
         private static int m_detailLevel;
         private static bool m_shipUpgrade;
+        private static int m_upgradePrice;
 
         private static Unlockables.RegisteredUnlockable scanner;
 
@@ -57,7 +59,7 @@ namespace ScanPlus
                 alreadyUnlocked = false
             };
 
-            Unlockables.RegisterUnlockable(scanUpgrade , storeType: StoreType.ShipUpgrade, price: 1);
+            Unlockables.RegisterUnlockable(scanUpgrade , storeType: StoreType.ShipUpgrade, price: m_upgradePrice);
             scanner = Unlockables.registeredUnlockables.Find(u => u.unlockable.unlockableName == UpgradeName);
             
 
@@ -71,10 +73,12 @@ namespace ScanPlus
             //Setup Config File
             config_DetailLevel = Config.Bind("DETAIL", "DetailLevel", 2, "Life Scan Detail -> | 0 = LOW | 1 = MEDIUM | 2 = HIGH | 3 = EXCESSIVE");
             config_ShipUpgrade = Config.Bind("PREFERENCES", "ShipUpgrade", 1, "Enable Ship Upgrade -> | 0 = false | 1 = true");
+            config_UpgradePrice = Config.Bind("PREFERENCES", "UpgradePrice", 300, "Ship Scanner Upgrade Cost");
 
             //Load Config File
             m_detailLevel = config_DetailLevel.Value;
             m_shipUpgrade = Convert.ToBoolean(config_ShipUpgrade.Value);
+            m_upgradePrice = config_UpgradePrice.Value;
         }
 
         private static void OnTerminalParsedSentence(object sender, Events.TerminalParseSentenceEventArgs e)
