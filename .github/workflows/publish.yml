@@ -40,6 +40,7 @@ jobs:
     name: Upload Release Artifacts
     needs: build
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v4
