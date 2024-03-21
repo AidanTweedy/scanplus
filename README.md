@@ -1,6 +1,8 @@
 # ScanPlus
 
 [![GitHub Build Status](https://img.shields.io/github/actions/workflow/status/AidanTweedy/scanplus/build.yml?style=for-the-badge&logo=github)](https://github.com/AidanTweedy/scanplus/actions/workflows/build.yml)
+[![Thunderstore Version](https://img.shields.io/thunderstore/v/KiwiPositive/ScanPlus?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/KiwiPositive/ScanPlus/)
+[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/KiwiPositive/ScanPlus?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/KiwiPositive/ScanPlus/)
 
 A mod for *Lethal Company* which upgrades the ship's scanner, allowing it to scan lifeforms in addition to scrap.
 
