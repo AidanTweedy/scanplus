@@ -4,8 +4,11 @@ using System.Linq;
 using System.Text;
 
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+
+using HarmonyLib;
 
 using LethalLib.Modules;
 
@@ -18,6 +21,7 @@ namespace ScanPlus
     public class ScanPlus : BaseUnityPlugin
     {
         private static ManualLogSource _log = null!;
+        internal static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
         private static ConfigEntry<int>
             config_DetailLevel,
             config_ShipUpgrade,
@@ -28,10 +32,9 @@ namespace ScanPlus
 
         private static Unlockables.RegisteredUnlockable scanner;
 
-        private const string DefaultString = "\nNo life detected.\n\n";
-
         private const string UpgradeName = "Infrared Scanner";
         private const string UpgradeInfo = "\nUpgrades the ship's scanner with an infrared sensor, allowing for the detection of lifeforms present on the current moon.\n";
+        private const string DefaultString = "\nNo life detected.\n\n";
 
         private void Awake()
         {
@@ -40,6 +43,16 @@ namespace ScanPlus
             ConfigFile();
 
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded");
+
+            if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
+            {
+                var original = AccessTools.Method(typeof(Terminal), "TextPostProcess");
+                var postfix = new HarmonyMethod(typeof(TFCompatibility).GetMethod("TextPostProcessPrefixPostFix"));
+            
+                harmony.Patch(original, null, postfix);
+
+                Logger.LogInfo($"{PluginInfo.PLUGIN_GUID}: applying compatibility patch for TerminalFormatter");
+            }
 
             Events.TerminalParsedSentence += OnTerminalParsedSentence;
 
@@ -89,10 +102,12 @@ namespace ScanPlus
             if (m_shipUpgrade && !scanner.unlockable.hasBeenUnlockedByPlayer)
                 return;
 
-            e.ReturnedNode.displayText = e.ReturnedNode.displayText.Split('\n')[0] + '\n' + BuildEnemyCountString();
+            var delimiter = "\n";
+
+            e.ReturnedNode.displayText = e.ReturnedNode.displayText.Split(delimiter)[0] + delimiter + BuildEnemyCountString();
         }
 
-        private static string BuildEnemyCountString()
+        internal static string BuildEnemyCountString()
         {
             var entities = FindObjectsOfType<EnemyAI>()
                 .Where(ai => ai.GetComponentInChildren<ScanNodeProperties>() is not null)
