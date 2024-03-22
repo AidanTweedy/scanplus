@@ -14,7 +14,7 @@ Alternatively, you can use Thunderstore Mod Manager.
 
 ## Usage
 
-To use the upgraded scanner the player must purchase the `Infrared Scanner` ship upgrade. Doing so will add information about which creatures are spawned on the current moon.
+To use the upgraded scanner, the player must purchase the `Infrared Scanner` ship upgrade. Doing so will add information to the scan results about which creatures are spawned on the current moon.
 
 The need for the `Infrared Scanner` upgrade can be disabled in the config file (see below), allowing for the enhanced scan without having to purchase the upgrade.
 
