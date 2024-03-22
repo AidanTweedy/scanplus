@@ -18,6 +18,7 @@ namespace ScanPlus
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInDependency("atomic.terminalapi")]
+    [BepInDependency("TerminalFormatter", BepInDependency.DependencyFlags.SoftDependency)]
     public class ScanPlus : BaseUnityPlugin
     {
         private static ManualLogSource _log = null!;
@@ -46,12 +47,12 @@ namespace ScanPlus
 
             if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
             {
+                Logger.LogInfo($"{PluginInfo.PLUGIN_GUID}: applying compatibility patch for TerminalFormatter");
+                
                 var original = AccessTools.Method(typeof(Terminal), "TextPostProcess");
                 var postfix = new HarmonyMethod(typeof(TFCompatibility).GetMethod("TextPostProcessPrefixPostFix"));
             
                 harmony.Patch(original, null, postfix);
-
-                Logger.LogInfo($"{PluginInfo.PLUGIN_GUID}: applying compatibility patch for TerminalFormatter");
             }
 
             Events.TerminalParsedSentence += OnTerminalParsedSentence;
