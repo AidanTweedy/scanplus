@@ -50,10 +50,6 @@
     <Reference Include="LethalLib">
       <HintPath>../lib/LethalLib/LethalLib.dll</HintPath>
     </Reference>
-
-    <Reference Include="TerminalFormatter" PrivateAssets="All">
-      <HintPath>../lib/TerminalFormatter.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <Target Name="SetPluginVersion" BeforeTargets="AddGeneratedFile" DependsOnTargets="MinVer">

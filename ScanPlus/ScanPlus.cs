@@ -23,6 +23,7 @@ namespace ScanPlus
     {
         private static ManualLogSource _log = null!;
         internal static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
+        
         private static ConfigEntry<int>
             config_DetailLevel,
             config_ShipUpgrade,
@@ -32,7 +33,6 @@ namespace ScanPlus
         private static int m_upgradePrice;
 
         private static Unlockables.RegisteredUnlockable scanner;
-
         private const string UpgradeName = "Infrared Scanner";
         private const string UpgradeInfo = "\nUpgrades the ship's scanner with an infrared sensor, allowing for the detection of lifeforms present on the current moon.\n";
         private const string DefaultString = "\nNo life detected.\n\n";
