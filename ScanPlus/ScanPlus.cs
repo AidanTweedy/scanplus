@@ -4,8 +4,11 @@ using System.Linq;
 using System.Text;
 
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+
+using HarmonyLib;
 
 using LethalLib.Modules;
 
@@ -15,23 +18,24 @@ namespace ScanPlus
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInDependency("atomic.terminalapi")]
+    [BepInDependency("TerminalFormatter", BepInDependency.DependencyFlags.SoftDependency)]
     public class ScanPlus : BaseUnityPlugin
     {
         private static ManualLogSource _log = null!;
+        internal static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
+        
         private static ConfigEntry<int>
             config_DetailLevel,
             config_ShipUpgrade,
             config_UpgradePrice;
-        private static int m_detailLevel;
-        private static bool m_shipUpgrade;
-        private static int m_upgradePrice;
+        internal static int m_detailLevel;
+        internal static bool m_shipUpgrade;
+        internal static int m_upgradePrice;
 
-        private static Unlockables.RegisteredUnlockable scanner;
-
-        private const string DefaultString = "\nNo life detected.\n\n";
-
+        internal static Unlockables.RegisteredUnlockable scanner;
         private const string UpgradeName = "Infrared Scanner";
         private const string UpgradeInfo = "\nUpgrades the ship's scanner with an infrared sensor, allowing for the detection of lifeforms present on the current moon.\n";
+        private const string DefaultString = "\nNo life detected.\n\n";
 
         private void Awake()
         {
@@ -40,6 +44,16 @@ namespace ScanPlus
             ConfigFile();
 
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded");
+
+            if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
+            {
+                Logger.LogInfo($"{PluginInfo.PLUGIN_GUID}: applying compatibility patch for TerminalFormatter");
+                
+                var original = AccessTools.Method(typeof(Terminal), "TextPostProcess");
+                var postfix = new HarmonyMethod(typeof(TFCompatibility).GetMethod("TextPostProcessPrefixPostFix"));
+            
+                harmony.Patch(original, null, postfix);
+            }
 
             Events.TerminalParsedSentence += OnTerminalParsedSentence;
 
@@ -83,16 +97,14 @@ namespace ScanPlus
 
         private static void OnTerminalParsedSentence(object sender, Events.TerminalParseSentenceEventArgs e)
         {
-            if (e.ReturnedNode.name != "ScanInfo")
-                return;
-
-            if (m_shipUpgrade && !scanner.unlockable.hasBeenUnlockedByPlayer)
-                return;
-
-            e.ReturnedNode.displayText = e.ReturnedNode.displayText.Split('\n')[0] + '\n' + BuildEnemyCountString();
+            if (e.ReturnedNode.name == "ScanInfo" && UseUpgradedScan())
+            {
+                var delimiter = "\n";
+                e.ReturnedNode.displayText = e.ReturnedNode.displayText.Split(delimiter)[0] + delimiter + BuildEnemyCountString();
+            }
         }
 
-        private static string BuildEnemyCountString()
+        internal static string BuildEnemyCountString()
         {
             var entities = FindObjectsOfType<EnemyAI>()
                 .Where(ai => ai.GetComponentInChildren<ScanNodeProperties>() is not null)
@@ -137,6 +149,17 @@ namespace ScanPlus
 
             sb.AppendLine();
             return sb.ToString();
+        }
+        
+        internal static bool UseUpgradedScan()
+        {
+            if (!m_shipUpgrade)
+                return true;
+            
+            if (scanner.unlockable.hasBeenUnlockedByPlayer)
+                return true;
+            
+            return false;
         }
     }
 }
