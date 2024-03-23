@@ -97,15 +97,11 @@ namespace ScanPlus
 
         private static void OnTerminalParsedSentence(object sender, Events.TerminalParseSentenceEventArgs e)
         {
-            if (e.ReturnedNode.name != "ScanInfo")
-                return;
-
-            if (m_shipUpgrade && !scanner.unlockable.hasBeenUnlockedByPlayer)
-                return;
-
-            var delimiter = "\n";
-
-            e.ReturnedNode.displayText = e.ReturnedNode.displayText.Split(delimiter)[0] + delimiter + BuildEnemyCountString();
+            if (e.ReturnedNode.name == "ScanInfo" && UseUpgradedScan())
+            {
+                var delimiter = "\n";
+                e.ReturnedNode.displayText = e.ReturnedNode.displayText.Split(delimiter)[0] + delimiter + BuildEnemyCountString();
+            }
         }
 
         internal static string BuildEnemyCountString()
@@ -153,6 +149,17 @@ namespace ScanPlus
 
             sb.AppendLine();
             return sb.ToString();
+        }
+        
+        internal static bool UseUpgradedScan()
+        {
+            if (!m_shipUpgrade)
+                return true;
+            
+            if (scanner.unlockable.hasBeenUnlockedByPlayer)
+                return true;
+            
+            return false;
         }
     }
 }
