@@ -8,7 +8,7 @@ namespace ScanPlus
         [HarmonyPatch("TextPostProcess")]
         public static void TextPostProcessPrefixPostFix(string modifiedDisplayText, TerminalNode node, Terminal __instance)
         {
-            if (node.name == "ScanInfo")
+            if (node.name == "ScanInfo" && (ScanPlus.scanner.unlockable.hasBeenUnlockedByPlayer || !ScanPlus.m_shipUpgrade))
             {
                 __instance.currentText += ScanPlus.BuildEnemyCountString();
             }

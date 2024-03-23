@@ -28,11 +28,11 @@ namespace ScanPlus
             config_DetailLevel,
             config_ShipUpgrade,
             config_UpgradePrice;
-        private static int m_detailLevel;
-        private static bool m_shipUpgrade;
-        private static int m_upgradePrice;
+        internal static int m_detailLevel;
+        internal static bool m_shipUpgrade;
+        internal static int m_upgradePrice;
 
-        private static Unlockables.RegisteredUnlockable scanner;
+        internal static Unlockables.RegisteredUnlockable scanner;
         private const string UpgradeName = "Infrared Scanner";
         private const string UpgradeInfo = "\nUpgrades the ship's scanner with an infrared sensor, allowing for the detection of lifeforms present on the current moon.\n";
         private const string DefaultString = "\nNo life detected.\n\n";
