@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## ScanPlus [1.1.0] - 2024-04-XX
+
+### Added
+
+- Added color gradient for threat level from green to red.
+- Added a `Next spawn` field when using `EXCESSIVE (3)` detail level, alerting when a new entity is about to spawn.
+
+### Changed
+
+- Fixed a bug where the current threat level did not accurately represent the power level of spawned entities. ([#3](https://github.com/AidanTweedy/scanplus/issues/3))
+- Adjusted scanner detail levels.
+- Updated README.
+
+### Removed
+
+- None
+
 ## ScanPlus [1.0.3] - 2024-03-22
 
 ### Added
@@ -27,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated README
+- Updated README.
 
 ### Removed
 
@@ -51,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial Release
+- Initial Release.
 
 ### Changed
 
