@@ -6,6 +6,8 @@
 
 A mod for *Lethal Company* which upgrades the ship's scanner, allowing it to scan lifeforms in addition to scrap.
 
+![ScanPlus](https://i.imgur.com/UQVOitx.png)
+
 ## Installation
 
 Place `ScanPlus.dll` in your `BepInEx/plugins` folder.
