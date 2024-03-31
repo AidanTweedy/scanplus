@@ -4,13 +4,20 @@ namespace ScanPlus
 {
     public class UnlockableManager
     {
+        private ConfigManager ConfigManager;
         private const string UpgradeName = "Infrared Scanner";
         private const string UpgradeInfo = "\nUpgrades the ship's scanner with an infrared sensor, allowing for the detection of lifeforms present on the current moon.\n";
         internal Unlockables.RegisteredUnlockable scanner;
         
-        public UnlockableManager(){}
+        public UnlockableManager(ConfigManager _configManager)
+        {
+            ConfigManager = _configManager;
 
-        public void AddScannerToStore(int scannerPrice)
+            if (ConfigManager.ShipUpgrade == true)
+                AddScannerToStore();
+        }
+
+        private void AddScannerToStore()
         {
             var scanUpgrade = new UnlockableItem
             {
@@ -25,7 +32,7 @@ namespace ScanPlus
                 alreadyUnlocked = false
             };
 
-            Unlockables.RegisterUnlockable(scanUpgrade , storeType: StoreType.ShipUpgrade, price: scannerPrice);
+            Unlockables.RegisterUnlockable(scanUpgrade , storeType: StoreType.ShipUpgrade, price: ConfigManager.UpgradePrice);
             scanner = Unlockables.registeredUnlockables.Find(u => u.unlockable.unlockableName == UpgradeName);
             
 

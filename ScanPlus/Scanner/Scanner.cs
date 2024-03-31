@@ -6,18 +6,18 @@ using System.Linq;
 
 using System.Text;
 
-using TerminalApi.Events;
-
 namespace ScanPlus
 {
     public class Scanner
     {
+        private ConfigManager ConfigManager;
+        private UnlockableManager UnlockableManager;
         internal const string DefaultString = "\nNo life detected.\n\n";
-        public int DetailLevel { get; private set; }
 
-        public Scanner(int detailLevel)
+        public Scanner(ConfigManager _configManager, UnlockableManager _unlockableManager)
         {
-            this.DetailLevel = detailLevel;
+            ConfigManager = _configManager;
+            UnlockableManager = _unlockableManager;
         }
     
         public string BuildEnemyString()
@@ -46,7 +46,7 @@ namespace ScanPlus
             StringBuilder sb = new();
             sb.Append('\n');
 
-            switch (DetailLevel)
+            switch (ConfigManager.DetailLevel)
             {
                 case 0:
                     sb.Append($"Threat level: {coloredRelativeThreat}");
@@ -109,10 +109,10 @@ namespace ScanPlus
 
         public bool UseUpgradedScan()
         {
-            if (!ScanPlus.Instance._configManager.ShipUpgrade)
+            if (!ConfigManager.ShipUpgrade)
                 return true;
             
-            if (ScanPlus.Instance._unlockableManager.IsScannerUnlocked())
+            if (UnlockableManager.IsScannerUnlocked())
                 return true;
             
             return false;

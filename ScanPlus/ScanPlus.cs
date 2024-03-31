@@ -15,8 +15,8 @@ namespace ScanPlus
     {
         public static ScanPlus Instance { get; private set; }
         private static ManualLogSource _log = null!;
-        internal ConfigManager _configManager;
-        internal UnlockableManager _unlockableManager;
+        private ConfigManager _configManager;
+        private UnlockableManager _unlockableManager;
         internal Scanner _scanner;
         private static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
 
@@ -27,13 +27,9 @@ namespace ScanPlus
             _configManager = new ConfigManager(Config);
             _configManager.LoadConfigurations();
 
-            if (_configManager.ShipUpgrade == true)
-            {
-                _unlockableManager = new UnlockableManager();
-                _unlockableManager.AddScannerToStore(_configManager.UpgradePrice);
-            }
-            
-            _scanner = new Scanner(_configManager.DetailLevel);
+            _unlockableManager = new UnlockableManager(_configManager);
+
+            _scanner = new Scanner(_configManager, _unlockableManager);
 
             if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
             {
