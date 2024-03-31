@@ -40,7 +40,7 @@ namespace ScanPlus
             int maxThreatLevel = RoundManager.Instance.currentLevel.maxEnemyPowerCount + RoundManager.Instance.currentLevel.maxOutsideEnemyPowerCount;
             float relativeThreat = (float)threatLevel / maxThreatLevel;
             
-            var coloredRelativeThreat = GetColoredPercentage(relativeThreat);
+            var coloredRelativeThreat = BuildColoredPercentage(relativeThreat);
             var nextSpawnTime = GetNextSpawn();
 
             StringBuilder sb = new();
@@ -75,7 +75,7 @@ namespace ScanPlus
             return sb.ToString();
         }
 
-        private static string GetColoredPercentage(float value)
+        private static string BuildColoredPercentage(float value)
         {
             float cappedValue = Math.Max(0.0f, Math.Min(1.0f, value));
             int red, green;
