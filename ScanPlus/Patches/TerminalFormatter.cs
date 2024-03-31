@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 
 namespace ScanPlus
@@ -8,9 +9,9 @@ namespace ScanPlus
         [HarmonyPatch("TextPostProcess")]
         public static void TextPostProcessPrefixPostFix(string modifiedDisplayText, TerminalNode node, Terminal __instance)
         {
-            if (node.name == "ScanInfo" && ScanPlus.UseUpgradedScan())
+            if (node.name == "ScanInfo" && ScanPlus.Instance._scanner.UseUpgradedScan())
             {
-                __instance.currentText += ScanPlus.BuildEnemyCountString();
+                __instance.currentText += ScanPlus.Instance._scanner.BuildEnemyString();
             }
         }
     }
