@@ -32,13 +32,13 @@ namespace ScanPlus
                 return DefaultString;
 
             int numEntities = entities.SelectMany(group => group).Count();
-            int threatLevel = entities
+            float threatLevel = entities
                 .SelectMany(group => group)
                 .Where(ai => ai.enemyType.isDaytimeEnemy == false)
                 .Sum(ai => ai.enemyType.PowerLevel);
 
-            int maxThreatLevel = RoundManager.Instance.currentLevel.maxEnemyPowerCount + RoundManager.Instance.currentLevel.maxOutsideEnemyPowerCount;
-            float relativeThreat = (float)threatLevel / maxThreatLevel;
+            float maxThreatLevel = RoundManager.Instance.currentLevel.maxEnemyPowerCount + RoundManager.Instance.currentLevel.maxOutsideEnemyPowerCount;
+            float relativeThreat = threatLevel / maxThreatLevel;
             
             var coloredRelativeThreat = BuildColoredPercentage(relativeThreat);
             var nextSpawnTime = GetNextSpawn();
@@ -52,17 +52,17 @@ namespace ScanPlus
                     sb.Append($"Threat level: {coloredRelativeThreat}");
                     break;
                 case 1:
-                    sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {threatLevel}.");
+                    sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {(int)threatLevel}.");
                     break;
                 case 2:
-                    sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {threatLevel}.\n\nLife detected:");
+                    sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {(int)threatLevel}.\n\nLife detected:");
                     foreach (var group in entities)
                     {
                         sb.AppendLine($"\n  {group.Key}: {group.Count()}");
                     }
                     break;
                 case 3:
-                    sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {threatLevel}.\n\nLife detected:");
+                    sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {(int)threatLevel}.\n\nLife detected:");
                     foreach (var group in entities)
                     {
                         sb.AppendLine($"\n  {group.Key}: {group.Count()}");
