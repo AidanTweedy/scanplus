@@ -14,15 +14,16 @@ namespace ScanPlus
     public class ScanPlus : BaseUnityPlugin
     {
         public static ScanPlus Instance { get; private set; }
-        internal static ManualLogSource log = null!;
+        internal static ManualLogSource Log = null!;
+        
+        internal static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
         private ConfigManager _configManager;
         private UnlockableManager _unlockableManager;
         internal Scanner _scanner;
-        internal static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
 
         private void Awake()
         {
-            log = Logger;
+            Log = Logger;
 
             _configManager = new ConfigManager(Config);
             _configManager.LoadConfigurations();

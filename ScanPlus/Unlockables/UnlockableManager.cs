@@ -14,7 +14,7 @@ namespace ScanPlus
         private ConfigManager ConfigManager;
         private const string UpgradeName = "Infrared Scanner";
         private const string UpgradeInfo = "\nUpgrades the ship's scanner with an infrared sensor, allowing for the detection of lifeforms present on the current moon.\n";
-        private int UpgradePrice = 1;
+        private int UpgradePrice;
         internal UnlockableItem ScanUpgrade = new UnlockableItem
             {
                 unlockableName = UpgradeName,
@@ -35,8 +35,7 @@ namespace ScanPlus
 
             if (ConfigManager.ShipUpgrade == true)
             {
-                UpgradePrice = ConfigManager.UpgradePrice;
-                ScanPlus.log.LogInfo($"{PluginInfo.PLUGIN_GUID}: adding scanner unlockable to store.");
+                ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: adding scanner unlockable to store.");
                 ScanPlus.harmony.PatchAll(typeof(UnlockableManager));
             }
         }
@@ -49,7 +48,7 @@ namespace ScanPlus
                 Instance?.AddScannerToStore(__instance);
             } catch(Exception e)
             {
-               ScanPlus.log.LogInfo($"{PluginInfo.PLUGIN_GUID}: error occurred registering scanner upgrade: {e}"); 
+               ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: error occurred registering scanner upgrade: {e}"); 
             }
         }
 
@@ -67,7 +66,7 @@ namespace ScanPlus
 
             } catch(Exception e)
             {
-                ScanPlus.log.LogError(e);
+                ScanPlus.Log.LogError(e);
             }
             
         }
@@ -100,11 +99,13 @@ namespace ScanPlus
 
                 var keyword = CreateKeyword($"{UpgradeName.ToLowerInvariant().Replace(" ", "")}", buyKeyword);
 
+                UpgradePrice = ConfigManager.UpgradePrice;
+
                 unlockablesList.unlockables.Capacity++;
                 unlockablesList.unlockables.Add(ScanUpgrade);
                 scannerUnlockableID = unlockablesList.unlockables.FindIndex(unlockable => unlockable.unlockableName == UpgradeName);
 
-                ScanPlus.log.LogInfo($"{UpgradeName} added to unlockable list at index {scannerUnlockableID}");
+                ScanPlus.Log.LogInfo($"{UpgradeName} added to unlockable list at index {scannerUnlockableID}");
 
                 TerminalNode buyNode2 = ScriptableObject.CreateInstance<TerminalNode>();
                 buyNode2.name = $"{UpgradeName.Replace(" ", "-")}BuyNode2";
@@ -169,7 +170,7 @@ namespace ScanPlus
                 });
                 infoKeyword.compatibleNouns = itemInfoNouns.ToArray();
                
-                ScanPlus.log.LogInfo($"{PluginInfo.PLUGIN_GUID}: successfully added {UpgradeName} to the store.");
+                ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: successfully added {UpgradeName} to the store.");
             } else
             {
                 scannerUnlockableID = index;
