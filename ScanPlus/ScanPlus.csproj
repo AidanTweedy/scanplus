@@ -47,9 +47,6 @@
     <Reference Include="TerminalApi">
       <HintPath>../lib/TerminalApi/TerminalApi.dll</HintPath>
     </Reference>
-    <Reference Include="LethalLib">
-      <HintPath>../lib/LethalLib/LethalLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <Target Name="SetPluginVersion" BeforeTargets="AddGeneratedFile" DependsOnTargets="MinVer">

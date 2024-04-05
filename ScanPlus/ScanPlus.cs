@@ -14,15 +14,15 @@ namespace ScanPlus
     public class ScanPlus : BaseUnityPlugin
     {
         public static ScanPlus Instance { get; private set; }
-        private static ManualLogSource _log = null!;
+        internal static ManualLogSource log = null!;
         private ConfigManager _configManager;
         private UnlockableManager _unlockableManager;
         internal Scanner _scanner;
-        private static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
+        internal static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
 
         private void Awake()
         {
-            _log = Logger;
+            log = Logger;
 
             _configManager = new ConfigManager(Config);
             _configManager.LoadConfigurations();
@@ -32,14 +32,7 @@ namespace ScanPlus
             _scanner = new Scanner(_configManager, _unlockableManager);
 
             if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
-            {
-                Logger.LogInfo($"{PluginInfo.PLUGIN_GUID}: applying compatibility patch for TerminalFormatter");
-                
-                var original = AccessTools.Method(typeof(Terminal), "TextPostProcess");
-                var postfix = new HarmonyMethod(typeof(TFCompatibility).GetMethod("TextPostProcessPrefixPostFix"));
-            
-                harmony.Patch(original, null, postfix);
-            }
+                harmony.PatchAll(typeof(TFCompatibility));
 
             Events.TerminalParsedSentence += OnTerminalParsedSentence;
 
