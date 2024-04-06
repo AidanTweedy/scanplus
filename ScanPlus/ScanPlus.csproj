@@ -54,7 +54,7 @@
   </Target>
 
   <Target Name="PackThunderstore" DependsOnTargets="SetPluginVersion" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
-    <Exec Command="dotnet tcli build --config-path $(ProjectDir)assets/thunderstore.toml --package-version $(PlainVersion)" />
+    <Exec Command="dotnet tcli build --config-path $(ProjectDir)Assets/thunderstore.toml --package-version $(PlainVersion)" />
     <ItemGroup>
         <FilesToRename Include="$(ProjectDir)dist/*-$(PlainVersion).zip" />
     </ItemGroup>
@@ -62,7 +62,7 @@
   </Target>
 
   <Target Name="PublishThunderstore" DependsOnTargets="SetPluginVersion">
-    <Exec Command="dotnet tcli publish --config-path $(ProjectDir)assets/thunderstore.toml --file $(ProjectDir)dist/*-$(MinVerVersion).zip" />
+    <Exec Command="dotnet tcli publish --config-path $(ProjectDir)Assets/thunderstore.toml --file $(ProjectDir)dist/*-$(MinVerVersion).zip" />
   </Target>
 
 </Project>
