@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 using HarmonyLib;
@@ -42,21 +43,30 @@ namespace ScanPlus
                 .ToList();
 
             if (entities.Count == 0)
+            {
                 return DefaultString;
+            }
 
             int numEntities = entities.SelectMany(group => group).Count();
-            float threatLevel = entities
-                .SelectMany(group => group)
-                .Where(ai => ai.enemyType.isDaytimeEnemy == false)
-                .Sum(ai => ai.enemyType.PowerLevel);
+            float threatLevel = entities.SelectMany(group => group)
+                .Where(ai => !ai.enemyType.isDaytimeEnemy)
+                .Sum(ai =>
+                {
+                    if (ai?.enemyType == null)
+                    {
+                        return 0.0f;
+                    }
 
-            float maxThreatLevel = RoundManager.Instance.currentLevel.maxEnemyPowerCount + RoundManager.Instance.currentLevel.maxOutsideEnemyPowerCount;
+                    var powerLevelField = ai.enemyType.GetType().GetField("PowerLevel");
+                    return powerLevelField != null ? Convert.ToSingle(powerLevelField.GetValue(ai.enemyType)) : 0.0f;
+                });
+
+            var maxThreatLevel = RoundManager.Instance.currentLevel.maxEnemyPowerCount + RoundManager.Instance.currentLevel.maxOutsideEnemyPowerCount;
             float relativeThreat = threatLevel / maxThreatLevel;
-            
             var coloredRelativeThreat = BuildColoredPercentage(relativeThreat);
             var nextSpawnTime = GetNextSpawn();
 
-            StringBuilder sb = new();
+            StringBuilder sb = new StringBuilder();
             sb.Append('\n');
 
             switch (ConfigManager.DetailLevel)
@@ -64,9 +74,11 @@ namespace ScanPlus
                 case 0:
                     sb.Append($"Threat level: {coloredRelativeThreat}");
                     break;
+
                 case 1:
                     sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {(int)threatLevel}.");
                     break;
+
                 case 2:
                     sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {(int)threatLevel}.\n\nLife detected:");
                     foreach (var group in entities)
@@ -74,6 +86,7 @@ namespace ScanPlus
                         sb.AppendLine($"\n  {group.Key}: {group.Count()}");
                     }
                     break;
+
                 case 3:
                     sb.Append($"Threat level: {coloredRelativeThreat}\n\n{numEntities} lifeforms detected, totalling a threat level of {(int)threatLevel}.\n\nLife detected:");
                     foreach (var group in entities)
