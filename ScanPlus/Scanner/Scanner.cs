@@ -1,9 +1,6 @@
 using System;
-
 using System.Data;
-
 using System.Linq;
-
 using System.Text;
 
 using HarmonyLib;
@@ -22,6 +19,18 @@ namespace ScanPlus
             Instance = this;
             ConfigManager = _configManager;
             UnlockableManager = _unlockableManager;
+
+            ScanPlus.Harmony.PatchAll(typeof(Scanner));
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(Terminal), "ParsePlayerSentence")]
+        public static void ParsePlayerSentence(ref TerminalNode __result)
+        {
+            if (__result.name == "ScanInfo" && Instance.UseUpgradedScan())
+            {
+                var delimiter = "\n";
+                __result.displayText = __result.displayText.Split(delimiter)[0] + delimiter + Instance.BuildEnemyString();
+            }
         }
     
         public string BuildEnemyString()
@@ -120,16 +129,6 @@ namespace ScanPlus
                 return true;
             
             return false;
-        }
-
-        [HarmonyPostfix, HarmonyPatch(typeof(Terminal), "ParsePlayerSentence")]
-        public static void Patch_ParsePlayerSentence(ref TerminalNode __result)
-        {
-            if (__result.name == "ScanInfo" && Instance.UseUpgradedScan())
-            {
-                var delimiter = "\n";
-                __result.displayText = __result.displayText.Split(delimiter)[0] + delimiter + Instance.BuildEnemyString();
-            }
         }
     }
 }

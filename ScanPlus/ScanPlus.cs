@@ -30,8 +30,6 @@ namespace ScanPlus
 
             _scanner = new Scanner(_configManager, _unlockableManager);
 
-            Harmony.PatchAll(typeof(Scanner));
-
             if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
                 Harmony.PatchAll(typeof(TFCompatibility));
 

@@ -35,25 +35,25 @@ namespace ScanPlus
 
             if (ConfigManager.ShipUpgrade == true)
             {
-                ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: adding scanner unlockable to store.");
+                ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: adding scanner to store");
                 ScanPlus.Harmony.PatchAll(typeof(UnlockableManager));
             }
         }
 
         [HarmonyPostfix, HarmonyPatch(typeof(Terminal), "Awake")]
-        public static void Patch_TerminalAwake(Terminal __instance)
+        public static void TerminalAwake(Terminal __instance)
         {
             try
             {
                 Instance?.AddScannerToStore(__instance);
             } catch(Exception e)
             {
-               ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: error occurred registering scanner upgrade: {e}"); 
+               ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: error occurred adding scanner to store:\n{e}"); 
             }
         }
 
         [HarmonyPrefix, HarmonyPatch(typeof(Terminal), "TextPostProcess")]
-        public static void Patch_TextPostProcess(ref string modifiedDisplayText, TerminalNode node)
+        public static void TextPostProcess(ref string modifiedDisplayText, TerminalNode node)
         {
             try
             {
@@ -104,8 +104,6 @@ namespace ScanPlus
                 unlockablesList.unlockables.Capacity++;
                 unlockablesList.unlockables.Add(ScanUpgrade);
                 scannerUnlockableID = unlockablesList.unlockables.FindIndex(unlockable => unlockable.unlockableName == UpgradeName);
-
-                ScanPlus.Log.LogInfo($"{UpgradeName} added to unlockable list at index {scannerUnlockableID}");
 
                 TerminalNode buyNode2 = ScriptableObject.CreateInstance<TerminalNode>();
                 buyNode2.name = $"{UpgradeName.Replace(" ", "-")}BuyNode2";
@@ -171,9 +169,6 @@ namespace ScanPlus
                 infoKeyword.compatibleNouns = itemInfoNouns.ToArray();
                
                 ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: successfully added {UpgradeName} to the store.");
-            } else
-            {
-                scannerUnlockableID = index;
             }
         }
         
