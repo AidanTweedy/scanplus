@@ -30,22 +30,12 @@ namespace ScanPlus
 
             _scanner = new Scanner(_configManager, _unlockableManager);
 
-            Harmony.PatchAll(typeof(ScanPlus));
+            Harmony.PatchAll(typeof(Scanner));
 
             if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
                 Harmony.PatchAll(typeof(TFCompatibility));
 
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded");
-        }
-
-        [HarmonyPostfix, HarmonyPatch(typeof(Terminal), "ParsePlayerSentence")]
-        public static void Patch_ParsePlayerSentence(ref TerminalNode __result)
-        {
-            if (__result.name == "ScanInfo" && Instance._scanner.UseUpgradedScan())
-            {
-                var delimiter = "\n";
-                __result.displayText = __result.displayText.Split(delimiter)[0] + delimiter + Instance._scanner.BuildEnemyString();
-            }
         }
     }
 }

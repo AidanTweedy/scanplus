@@ -14,8 +14,6 @@ containsNsfwContent = false
 [package.dependencies]
 # https://thunderstore.io/c/lethal-company/p/BepInEx/BepInExPack/
 BepInEx-BepInExPack = "5.4.2100"
-# https://thunderstore.io/c/lethal-company/p/NotAtomicBomb/TerminalApi/
-NotAtomicBomb-TerminalApi = "1.5.2"
 
 [build]
 icon = "icon.png"

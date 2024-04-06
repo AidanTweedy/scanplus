@@ -1,21 +1,22 @@
 using System;
-
 using System.Data;
-
 using System.Linq;
-
 using System.Text;
+
+using HarmonyLib;
 
 namespace ScanPlus
 {
     public class Scanner
     {
+        public static Scanner Instance { get; private set; }
         private ConfigManager ConfigManager;
         private UnlockableManager UnlockableManager;
         internal const string DefaultString = "\nNo life detected.\n\n";
 
         public Scanner(ConfigManager _configManager, UnlockableManager _unlockableManager)
         {
+            Instance = this;
             ConfigManager = _configManager;
             UnlockableManager = _unlockableManager;
         }
@@ -116,6 +117,16 @@ namespace ScanPlus
                 return true;
             
             return false;
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(Terminal), "ParsePlayerSentence")]
+        public static void Patch_ParsePlayerSentence(ref TerminalNode __result)
+        {
+            if (__result.name == "ScanInfo" && Instance.UseUpgradedScan())
+            {
+                var delimiter = "\n";
+                __result.displayText = __result.displayText.Split(delimiter)[0] + delimiter + Instance.BuildEnemyString();
+            }
         }
     }
 }

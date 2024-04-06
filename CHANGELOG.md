@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Removed dependency for `LethalLib`.
+- Removed dependencies for `LethalLib` and `TerminalApi`.
 
 ## ScanPlus [1.1.0] - 2024-03-30
 
