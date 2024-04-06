@@ -44,9 +44,6 @@
         <HintPath>../lib/UnityEngine.CoreModule.dll</HintPath>
         <Private>false</Private>
     </Reference>
-    <Reference Include="TerminalApi">
-      <HintPath>../lib/TerminalApi/TerminalApi.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <Target Name="SetPluginVersion" BeforeTargets="AddGeneratedFile" DependsOnTargets="MinVer">

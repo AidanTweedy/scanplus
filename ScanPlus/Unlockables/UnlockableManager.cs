@@ -36,7 +36,7 @@ namespace ScanPlus
             if (ConfigManager.ShipUpgrade == true)
             {
                 ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: adding scanner unlockable to store.");
-                ScanPlus.harmony.PatchAll(typeof(UnlockableManager));
+                ScanPlus.Harmony.PatchAll(typeof(UnlockableManager));
             }
         }
 

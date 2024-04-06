@@ -4,25 +4,23 @@ using BepInEx.Logging;
 
 using HarmonyLib;
 
-using TerminalApi.Events;
-
 namespace ScanPlus
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    [BepInDependency("atomic.terminalapi")]
     [BepInDependency("TerminalFormatter", BepInDependency.DependencyFlags.SoftDependency)]
     public class ScanPlus : BaseUnityPlugin
     {
         public static ScanPlus Instance { get; private set; }
         internal static ManualLogSource Log = null!;
         
-        internal static Harmony harmony = new(PluginInfo.PLUGIN_GUID);
+        internal static Harmony Harmony = new(PluginInfo.PLUGIN_GUID);
         private ConfigManager _configManager;
         private UnlockableManager _unlockableManager;
         internal Scanner _scanner;
 
         private void Awake()
         {
+            Instance = this;
             Log = Logger;
 
             _configManager = new ConfigManager(Config);
@@ -32,20 +30,21 @@ namespace ScanPlus
 
             _scanner = new Scanner(_configManager, _unlockableManager);
 
-            if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
-                harmony.PatchAll(typeof(TFCompatibility));
+            Harmony.PatchAll(typeof(ScanPlus));
 
-            Events.TerminalParsedSentence += OnTerminalParsedSentence;
+            if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
+                Harmony.PatchAll(typeof(TFCompatibility));
 
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded");
         }
 
-        private void OnTerminalParsedSentence(object sender, Events.TerminalParseSentenceEventArgs e)
+        [HarmonyPostfix, HarmonyPatch(typeof(Terminal), "ParsePlayerSentence")]
+        public static void Patch_ParsePlayerSentence(ref TerminalNode __result)
         {
-            if (e.ReturnedNode.name == "ScanInfo" && _scanner.UseUpgradedScan())
+            if (__result.name == "ScanInfo" && Instance._scanner.UseUpgradedScan())
             {
                 var delimiter = "\n";
-                e.ReturnedNode.displayText = e.ReturnedNode.displayText.Split(delimiter)[0] + delimiter + _scanner.BuildEnemyString();
+                __result.displayText = __result.displayText.Split(delimiter)[0] + delimiter + Instance._scanner.BuildEnemyString();
             }
         }
     }
