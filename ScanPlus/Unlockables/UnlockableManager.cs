@@ -128,16 +128,16 @@ namespace ScanPlus
                 buyNode1.overrideOptions = true;
                 buyNode1.terminalOptions = new[]
                 {
-                    new CompatibleNoun()
-                    {
-                        noun = terminal.terminalNodes.allKeywords.First(keyword2 => keyword2.word == "confirm"),
-                        result = buyNode2
-                    },
-                    new CompatibleNoun()
-                    {
-                        noun = terminal.terminalNodes.allKeywords.First(keyword2 => keyword2.word == "deny"),
-                        result = cancelPurchaseNode
-                    }
+                    new CompatibleNoun
+                    (
+                        terminal.terminalNodes.allKeywords.First(keyword2 => keyword2.word == "confirm"),
+                        buyNode2
+                    ),
+                    new CompatibleNoun
+                    (
+                        terminal.terminalNodes.allKeywords.First(keyword2 => keyword2.word == "deny"),
+                        cancelPurchaseNode
+                    )
                 };
 
                 string infoText = UpgradeInfo;
@@ -153,19 +153,19 @@ namespace ScanPlus
                 terminal.terminalNodes.allKeywords = allKeywords.ToArray();
 
                 var nouns = buyKeyword.compatibleNouns.ToList();
-                nouns.Add(new CompatibleNoun()
-                {
-                    noun = keyword,
-                    result = buyNode1
-                });
+                nouns.Add(new CompatibleNoun
+                (
+                    keyword,
+                    buyNode1
+                ));
                 buyKeyword.compatibleNouns = nouns.ToArray();
 
                 var itemInfoNouns = infoKeyword.compatibleNouns.ToList();
-                itemInfoNouns.Add(new CompatibleNoun()
-                {
-                    noun = keyword,
-                    result = itemInfo
-                });
+                itemInfoNouns.Add(new CompatibleNoun
+                (
+                    keyword,
+                    itemInfo
+                ));
                 infoKeyword.compatibleNouns = itemInfoNouns.ToArray();
                
                 ScanPlus.Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: successfully added {UpgradeName} to the store.");

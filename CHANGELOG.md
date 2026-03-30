@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## ScanPlus [1.2.0] - 2026-03-30
+
+### Added
+
+- Added compatibility with `v80`.
+- Added configuration option for terminal commands to use the IR Scanner.
+
+### Changed
+
+- Moved the infrared scanner off the default `scan` command and onto separate configurable terminal commands for improved mod compatibility.
+- Updating scanning logic to detect Masked and Ghost Girl.
+
+### Removed
+
+- None
+
 ## ScanPlus [1.1.1] - 2024-04-06
 
 ### Added
