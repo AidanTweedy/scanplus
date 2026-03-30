@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Moved the infrared scanner off the default `scan` command and onto separate configurable terminal commands for improved mod compatibility.
 - Updating scanning logic to detect Masked and Ghost Girl.
-- Updated logo (again).
 
 ### Removed
 
