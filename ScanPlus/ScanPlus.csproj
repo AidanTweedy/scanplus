@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>ScanPlus</AssemblyName>
     <Description>Ship scanner mod for Lethal Company</Description>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <PackageId>AidanTweedy.ScanPlus</PackageId>
@@ -42,6 +42,10 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
         <HintPath>../lib/UnityEngine.CoreModule.dll</HintPath>
+        <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+        <HintPath>../lib/Unity.TextMeshPro.dll</HintPath>
         <Private>false</Private>
     </Reference>
   </ItemGroup>

@@ -1,10 +1,11 @@
 using System;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 using HarmonyLib;
+
+using UnityEngine;
 
 namespace ScanPlus
 {
@@ -13,8 +14,7 @@ namespace ScanPlus
         public static Scanner Instance { get; private set; }
         private ConfigManager ConfigManager;
         private UnlockableManager UnlockableManager;
-        internal const string DefaultString = "\nNo life detected.\n\n";
-
+        internal const string DefaultString = "Infrared Scanner unavailable - required upgrade not installed.\n\n";
         public Scanner(ConfigManager _configManager, UnlockableManager _unlockableManager)
         {
             Instance = this;
@@ -24,27 +24,45 @@ namespace ScanPlus
             ScanPlus.Harmony.PatchAll(typeof(Scanner));
         }
 
-        [HarmonyPostfix, HarmonyPatch(typeof(Terminal), "ParsePlayerSentence")]
-        public static void ParsePlayerSentence(ref TerminalNode __result)
+        [HarmonyPrefix, HarmonyPatch(typeof(Terminal), "ParsePlayerSentence")]
+        public static bool ParsePlayerSentence(ref TerminalNode __result, Terminal __instance)
         {
-            if (__result.name == "ScanInfo" && Instance.UseUpgradedScan())
+            string input = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded);
+            string norm_input = Utils.NormalizeCommand(input);
+
+            if (Instance.ConfigManager.CommandStrings.Contains(norm_input))
             {
-                var delimiter = "\n";
-                __result.displayText = __result.displayText.Split(delimiter)[0] + delimiter + Instance.BuildEnemyString();
+                TerminalNode terminalNode = ScriptableObject.CreateInstance<TerminalNode>();
+
+                if (Instance.UseInfraredScan())
+                {
+                    terminalNode.displayText = Instance.BuildEnemyString();
+                    terminalNode.clearPreviousText = true;
+                }
+                else
+                {
+                    terminalNode.displayText = DefaultString;
+                    terminalNode.clearPreviousText = true;                    
+                }
+
+                __result = terminalNode;
+                return false;
+                
             }
+            
+            return true;
         }
     
         public string BuildEnemyString()
         {
             var entities = RoundManager.Instance.SpawnedEnemies
-                .Where(ai => ai.GetComponentInChildren<ScanNodeProperties>() is not null)
                 .GroupBy(ai => ai.enemyType.enemyName)
                 .OrderBy(g => g.Key)
                 .ToList();
 
             if (entities.Count == 0)
             {
-                return DefaultString;
+                return "No life detected.\n";
             }
 
             int numEntities = entities.SelectMany(group => group).Count();
@@ -67,7 +85,6 @@ namespace ScanPlus
             var nextSpawnTime = GetNextSpawn();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append('\n');
 
             switch (ConfigManager.DetailLevel)
             {
@@ -133,7 +150,7 @@ namespace ScanPlus
             return "Unknown";
         }
 
-        public bool UseUpgradedScan()
+        public bool UseInfraredScan()
         {
             if (!ConfigManager.ShipUpgrade)
                 return true;

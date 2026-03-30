@@ -1,5 +1,4 @@
 ﻿﻿using BepInEx;
-using BepInEx.Bootstrap;
 using BepInEx.Logging;
 
 using HarmonyLib;
@@ -29,9 +28,6 @@ namespace ScanPlus
             _unlockableManager = new UnlockableManager(_configManager);
 
             _scanner = new Scanner(_configManager, _unlockableManager);
-
-            if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
-                Harmony.PatchAll(typeof(TFCompatibility));
 
             Logger.LogInfo($"{PluginInfo.PLUGIN_GUID} is loaded");
         }
