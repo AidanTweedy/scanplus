@@ -5,23 +5,25 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>ScanPlus</AssemblyName>
     <Description>Ship scanner mod for Lethal Company</Description>
-    <Version>1.2.0</Version>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
+    <Version>1.2.1</Version>
+    <BepInExPluginVersion>$(Version)</BepInExPluginVersion>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PackageId>AidanTweedy.ScanPlus</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-      <None Include="$(ProjectDir)../README.md" Pack="true" PackagePath="/" />
+    <None Include="$(ProjectDir)../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'"> 
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="UnityEngine.Modules" Version="2022.3.9" IncludeAssets="compile" />
@@ -29,44 +31,33 @@
 
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-        <HintPath>../lib/Assembly-CSharp.dll</HintPath>
-        <Private>false</Private>
+      <HintPath>../lib/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Unity.Netcode.Runtime">
-        <HintPath>../lib/Unity.Netcode.Runtime.dll</HintPath>
-        <Private>false</Private>
+      <HintPath>../lib/Unity.Netcode.Runtime.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">
-        <HintPath>../lib/UnityEngine.dll</HintPath>
-        <Private>false</Private>
+      <HintPath>../lib/UnityEngine.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-        <HintPath>../lib/UnityEngine.CoreModule.dll</HintPath>
-        <Private>false</Private>
+      <HintPath>../lib/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-        <HintPath>../lib/Unity.TextMeshPro.dll</HintPath>
-        <Private>false</Private>
+      <HintPath>../lib/Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
-  <Target Name="SetPluginVersion" BeforeTargets="AddGeneratedFile" DependsOnTargets="MinVer">
-      <PropertyGroup>
-          <PlainVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)</PlainVersion>
-          <BepInExPluginVersion>$(PlainVersion)</BepInExPluginVersion>
-      </PropertyGroup>
+  <Target Name="PackThunderstore" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
+    <Exec Command="dotnet tcli build --config-path $(ProjectDir)Assets/thunderstore.toml --package-version $(Version)" />
   </Target>
 
-  <Target Name="PackThunderstore" DependsOnTargets="SetPluginVersion" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
-    <Exec Command="dotnet tcli build --config-path $(ProjectDir)Assets/thunderstore.toml --package-version $(PlainVersion)" />
-    <ItemGroup>
-        <FilesToRename Include="$(ProjectDir)dist/*-$(PlainVersion).zip" />
-    </ItemGroup>
-    <Move SourceFiles="@(FilesToRename)" DestinationFiles="@(FilesToRename -&gt; Replace($(PlainVersion), $(MinVerVersion)))" />
-  </Target>
-
-  <Target Name="PublishThunderstore" DependsOnTargets="SetPluginVersion">
-    <Exec Command="dotnet tcli publish --config-path $(ProjectDir)Assets/thunderstore.toml --file $(ProjectDir)dist/*-$(MinVerVersion).zip" />
+  <Target Name="PublishThunderstore">
+    <Exec Command="dotnet tcli publish --config-path $(ProjectDir)Assets/thunderstore.toml --file $(ProjectDir)dist/*-$(Version).zip" />
   </Target>
 
 </Project>
